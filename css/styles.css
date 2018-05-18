@@ -206,7 +206,7 @@ nav h1 a {
 .inside {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 110px 1fr 66px;
+  grid-template-rows: auto 1fr auto;
   grid-template-areas:
     "header"
     "main"
