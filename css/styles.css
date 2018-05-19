@@ -59,6 +59,7 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
   position: absolute;
   top: -4000px;
   z-index: 100;
+  background: white;
 }
 #maincontent {
   background-color: #f3f3f3;
