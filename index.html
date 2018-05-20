@@ -18,25 +18,25 @@
       </h1>
     </nav>
   </header>
-  <main id="maincontent">
+  <main id="maincontent" class="main">
     <section id="map-container">
       <div id="map" class="map"></div>
     </section>
     <section id="restaurants">
       <div class="filter-options">
-        <h2>Filter Results</h2>
+        <h2 class="filter-options__h2">Filter Results</h2>
         <div>
-          <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
+          <select id="neighborhoods-select" class="filter-options__drop-down" name="neighborhoods" onchange="updateRestaurants()">
             <option value="all">All Neighborhoods</option>
           </select>
           <label class="offscreen-label" for="neighborhoods-select">neighborhoods</label>
-          <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()">
+          <select id="cuisines-select" class="filter-options__drop-down" name="cuisines" onchange="updateRestaurants()">
             <option value="all">All Cuisines</option>
           </select>
           <label class="offscreen-label" for="cuisines-select">cuisines</label>
         </div>
       </div>
-      <ul id="restaurants-list"></ul>
+      <ul id="restaurants-list" class="restaurants-list"></ul>
     </section>
   </main>
 
@@ -44,7 +44,7 @@
   <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?&libraries=places&callback=initMap"></script>
 
-  <footer id="footer">
+  <footer id="footer" class="footer">
     Copyright (c) 2017
     <a href="/">
       <strong>Restaurant Reviews</strong>
