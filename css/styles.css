@@ -326,11 +326,6 @@ nav h1 a {
   text-transform: uppercase;
 }
 
-.restaurant-address {
-  font-size: 1rem;
-  margin: 0;
-}
-
 .restaurant-cuisine {
   background-color: #333;
   color: #ddd;
@@ -342,6 +337,16 @@ nav h1 a {
   text-align: center;
   text-transform: uppercase;
 	width: 100%;
+}
+
+.restaurant-address {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.restaurant-hours__day,
+.restaurant-hours__time {
+  color: #666;
 }
 
 .restaurant-container,
@@ -376,9 +381,9 @@ nav h1 a {
   list-style-type: none;
   margin: 0 0 1.875rem;
   overflow: hidden;
-  padding: 0 1.6rem 1.6rem;
   position: relative;
   width: 100%;
+  border-radius: 20px 0 20px 0;
 }
 
 .reviews-list__li__name,
@@ -388,8 +393,33 @@ nav h1 a {
   margin: 0 0 0.625rem;
 }
 
-.restaurant-hours td {
-  color: #666;
+.reviews-list__li__name{
+  border-radius: 20px 0 0 0;
+  padding: 0.8rem;
+  color: white;
+  background: #333;
+  font-size: 1rem;
+}
+
+.reviews-list__li__date {
+  color: #ccc;
+  float: right;
+  font-size: 0.8rem;
+}
+
+.reviews-list__li__rating {
+  background: var(--secondary-bg-color);
+  color: white;
+  display: inline;
+  text-transform: uppercase;
+  padding: 0.2rem;
+  margin: 0.8rem;
+  border-radius: 3px;
+}
+
+.reviews-list__li__comments {
+  margin-top: 0.5rem;
+  padding: 0 0.8rem 0.8rem 0.8rem;
 }
 
 
@@ -411,7 +441,12 @@ nav h1 a {
   }
 }
 @media screen and (max-width: 500px) {
+
   .map {
     height: 300px;
+  }
+
+  .reviews-container {
+    padding: 0.5rem 0.5rem 0;
   }
 }
