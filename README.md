@@ -42,10 +42,6 @@ Most of the code in this project has been written to the ES6 JavaScript specific
 
 #### Before and after screenshots
 
-<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-before-home.jpg" width="40%" title="restaurant review app home page before changes" alt="restaurant review app home page before changes">
-<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-after-home.jpg" width="40%" title="restaurant review app home page after changes" alt="restaurant review app home page after changes">
-<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-before-restaurant.jpg" width="40%" title="restaurant review app restaurant page before changes" alt="restaurant review app restaurant page before changes">
-<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-after-restaurant.jpg" width="40%" title="restaurant review app restaurant page after changes" alt="restaurant review app restaurant page after changes">
-<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-before-reviews.jpg" width="40%" title="restaurant review app restaurant page before changes" alt="restaurant review app restaurant page before changes">
-<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-after-reviews.jpg" width="40%" title="restaurant review app restaurant page after changes" alt="restaurant review app restaurant page after changes">
-
+<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-home.jpg" width="70%" title="restaurant reviews app home page before and after" alt="restaurant review app home page before and after">
+<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-restaurant.jpg" width="70%" title="restaurant review app restaurant page before and after" alt="restaurant review app restaurant page before and after">
+<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-reviews.jpg" width="70%" title="restaurant review app restaurant page before and after" alt="restaurant review app restaurant page before and after">
