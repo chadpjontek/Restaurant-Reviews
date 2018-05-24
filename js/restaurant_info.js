@@ -1,5 +1,5 @@
-let restaurant;
-var map;
+let restaurant,
+  map;
 
 /**
  * Initialize Google map, called from HTML.
@@ -149,7 +149,7 @@ createReviewHTML = (review) => {
 /**
  * Add restaurant name to the breadcrumb navigation menu
  */
-fillBreadcrumb = (restaurant=self.restaurant) => {
+fillBreadcrumb = (restaurant = self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
   const li = document.createElement('li');
   li.innerHTML = restaurant.name;
