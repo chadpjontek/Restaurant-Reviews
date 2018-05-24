@@ -162,9 +162,17 @@ class DBHelper {
       title: restaurant.name,
       url: DBHelper.urlForRestaurant(restaurant),
       map: map,
-      animation: google.maps.Animation.DROP}
+      animation: google.maps.Animation.DROP
+    }
     );
     return marker;
   }
+}
 
+// check if browser supports service workers
+// if so register service worker to go Offline First!
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('/sw.js')
+    .then(() => { console.log("This service worker is registered!"); })
 }
