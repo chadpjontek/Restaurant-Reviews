@@ -13,12 +13,70 @@ class DBHelper {
   }
 
   /**
+   * Open IndexedDB if the browser supports service workers.
+   */
+  static openDatabase() {
+    if (!navigator.serviceWorker) {
+      return Promise.resolve();
+    }
+    return idb.open('restaurant-reviews-app', 1, function (upgradeDb) {
+      const store = upgradeDb.createObjectStore('restaurants', {
+        keyPath: 'id'
+      });
+      store.createIndex('cuisine', 'cuisine_type');
+      store.createIndex('neighborhood', 'neighborhood');
+    });
+  }
+
+  /**
+   * Called once on main page load to update database.
+   */
+  static addRestaurantsToDb(restaurants) {
+    DBHelper.openDatabase()
+      .then(db => {
+        if (!db) return;
+        fetch(DBHelper.DATABASE_URL)
+          .then(response => response.json())
+          .then(restaurants => {
+            const tx = db.transaction('restaurants', 'readwrite');
+            const store = tx.objectStore('restaurants');
+            restaurants.forEach(restaurant => {
+              store.put(restaurant);
+            });
+          });
+      });
+  }
+
+  /**
+   * Get all restaurants from database.
+   */
+  static getRestaurantsFromDb() {
+    return DBHelper.openDatabase()
+      .then(db => {
+        return db.transaction('restaurants')
+          .objectStore('restaurants')
+          .getAll();
+      })
+      .catch((error => console.log(`There was an error fetching the restaurants: ${error}`)));
+  }
+
+  /**
    * Fetch all restaurants.
+   * Get from db if available, otherwise get from network.
    */
   static fetchRestaurants(callback) {
-    fetch(DBHelper.DATABASE_URL)
-      .then(response => response.json())
-      .then(restaurants => callback(null, restaurants))
+    DBHelper.getRestaurantsFromDb()
+      .then(restaurants => {
+        if (restaurants.length > 0) {
+          console.log('fetching from database');
+          callback(null, restaurants);
+        } else {
+          console.log('fetching from network');
+          fetch(DBHelper.DATABASE_URL)
+            .then(response => response.json())
+            .then(restaurants => callback(null, restaurants));
+        }
+      })
       .catch((error => console.log(`There was an error fetching the restaurants: ${error}`)));
   }
 
