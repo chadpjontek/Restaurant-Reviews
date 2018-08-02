@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Restaurant Info</title>
+</head>
+
+<body>
+  <div class="inside">
+    <a href="#restaurant-container" class="skip-link">Skip to restaurant section</a>
+    <!-- Beginning header -->
+    <header class="inside__header">
+      <!-- Beginning nav -->
+      <nav>
+        <h1>
+          <a href="/">Restaurant Reviews</a>
+        </h1>
+        <!-- Beginning breadcrumb -->
+        <ul id="breadcrumb" class="breadcrumb">
+          <li class="breadcrumb__li">
+            <a class="breadcrumb__li__a" href="/">Home</a>
+          </li>
+        </ul>
+        <!-- End breadcrumb -->
+      </nav>
+      <!-- End nav -->
+    </header>
+    <!-- End header -->
+    <!-- Beginning main -->
+    <main id="maincontent" class="main main--restaurant-content">
+      <!-- Beginning map -->
+      <section id="map-container" class="inside__map-container">
+        <div id="map" class="map map--inside" tabindex="0" role="application" aria-label="Google map with restaurant location" title="Google map with restaurant location"></div>
+      </section>
+      <!-- End map -->
+      <!-- Beginning restaurant -->
+      <div class="restaurant-and-reviews-container">
+        <section id="restaurant-container" class="restaurant-container">
+          <h2 id="restaurant-name" class="restaurant-name"></h2>
+          <img id="restaurant-img">
+          <p id="restaurant-cuisine" class="restaurant-cuisine"></p>
+          <p id="restaurant-address" class="restaurant-address"></p>
+          <table id="restaurant-hours" class="restaurant-hours"></table>
+        </section>
+        <!-- end restaurant -->
+        <!-- Beginning reviews -->
+        <section id="reviews-container" class="reviews-container">
+          <ul id="reviews-list" class="reviews-list"></ul>
+        </section>
+        <!-- End reviews -->
+      </div>
+    </main>
+    <!-- End main -->
+    <!-- Beginning footer -->
+    <footer id="footer" class="footer">
+      Copyright (c) 2017
+      <a href="/">
+        <strong>Restaurant Reviews</strong>
+      </a> All Rights Reserved.
+    </footer>
+    <!-- End footer -->
+  </div>
+</body>
+
+</html>

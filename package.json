@@ -1,16 +1,54 @@
 {
-  "name": "mws-restaurant-stage-1",
-  "version": "1.0.0",
-  "description": "Stage 1 project of the Udacity Mobile Web Specialist Nanodegree. Take a static design that lacks accessibility and convert the design to be responsive on different sized displays and accessible for screen reader use. Also add a service worker to begin the process of creating a seamless offline experience for users.",
+  "name": "mws-restaurant-stage-2",
+  "sideEffects": [
+    "./src/styles/atyles.scss",
+    "*.css"
+  ],
+  "version": "2.0.0",
+  "description": "Stage 2 project of the Udacity Mobile Web Specialist Nanodegree. Take the responsive, accessible design built in Stage One and connect it to an external server. Begin by using asynchronous JavaScript to request JSON data from the server. Store data received from the server in an offline database using IndexedDB, which will create an app shell architecture. Finally, work to optimize the site to meet performance benchmarks, and test using Lighthouse.",
   "main": "index.html",
   "dependencies": {
-    "idb": "^2.1.2"
+    "idb": "^2.1.2",
+    "lazysizes": "^4.0.4",
+    "leaflet": "^1.3.3",
+    "leaflet-defaulticon-compatibility": "^0.1.1"
   },
   "devDependencies": {
-    "grunt-responsive-images": "^1.10.1"
+    "autoprefixer": "^9.0.0",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.6",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "babel-preset-env": "^1.7.0",
+    "clean-webpack-plugin": "^0.1.19",
+    "copy-webpack-plugin": "^4.5.2",
+    "css-loader": "^1.0.0",
+    "eslint": "^4.19.1",
+    "eslint-loader": "^2.0.0",
+    "file-loader": "^1.1.11",
+    "html-critical-webpack-plugin": "^2.1.0",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.4.1",
+    "node-sass": "^4.9.2",
+    "optimize-css-assets-webpack-plugin": "^5.0.0",
+    "postcss-loader": "^2.1.6",
+    "postcss-scss": "^2.0.0",
+    "responsive-loader": "^1.1.0",
+    "sass-loader": "^7.0.3",
+    "sharp": "^0.20.5",
+    "style-loader": "^0.21.0",
+    "uglify-es": "^3.3.9",
+    "uglifyjs-webpack-plugin": "^1.2.7",
+    "webpack": "^4.16.0",
+    "webpack-cli": "^3.0.8",
+    "webpack-dev-server": "^3.1.4",
+    "webpack-merge": "^4.1.3"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack --config webpack.dev.js",
+    "start": "webpack-dev-server --open --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js"
   },
   "repository": {
     "type": "git",
