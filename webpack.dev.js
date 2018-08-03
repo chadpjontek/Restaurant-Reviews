@@ -56,7 +56,10 @@ module.exports = merge(common, {
   plugins: [
     new CopyWebpackPlugin([
       'src/sw.js',
-      'src/icons',
+      {
+        from: 'src/icons',
+        to: './icons',
+      },
       'src/manifest.json',
       'src/browserconfig.xml'
     ]),
