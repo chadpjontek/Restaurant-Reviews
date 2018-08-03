@@ -90,7 +90,13 @@ module.exports = merge(common, {
         transform(content) {
           return Promise.resolve(Buffer.from(UglifyJS.minify(content.toString()).code, 'utf8'));
         }
-      }
+      },
+      {
+        from: 'src/icons',
+        to: './icons',
+      },
+      'src/manifest.json',
+      'src/browserconfig.xml'
     ]),
     new HtmlWebpackPlugin({
       filename: 'index.html',

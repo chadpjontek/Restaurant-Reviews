@@ -55,7 +55,10 @@ module.exports = merge(common, {
   },
   plugins: [
     new CopyWebpackPlugin([
-      'src/sw.js'
+      'src/sw.js',
+      'src/icons',
+      'src/manifest.json',
+      'src/browserconfig.xml'
     ]),
     new MiniCssExtractPlugin({
       filename: './[name].css',
