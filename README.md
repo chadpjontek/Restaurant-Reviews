@@ -1,7 +1,15 @@
-# Mobile Web Specialist Certification Course
+# Restaurant Reviews
+#### _A three stage project required to complete the Udacity Mobile Web Specialist Nanodegree_
 ---
-#### _Three Stage Course Material Project - Restaurant Reviews_
 
+## Table of contents
+- [Stage 1 - completed](#stage1)
+
+- [Stage 2 - completed](#stage2)
+
+- Stage 3 - in progess
+
+<a name="stage1"/>
 ## Project Overview: Stage 1
 
 For the **Restaurant Reviews** projects, you will incrementally convert a static webpage to a mobile-ready web application. In **Stage One**, you will take a static design that lacks accessibility and convert the design to be responsive on different sized displays and accessible for screen reader use. You will also add a service worker to begin the process of creating a seamless offline experience for your users.
@@ -42,6 +50,68 @@ Most of the code in this project has been written to the ES6 JavaScript specific
 
 #### Before and after screenshots
 
-<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-home.jpg" width="70%" title="restaurant reviews app home page before and after" alt="restaurant review app home page before and after">
-<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-restaurant.jpg" width="70%" title="restaurant review app restaurant page before and after" alt="restaurant review app restaurant page before and after">
-<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-reviews.jpg" width="70%" title="restaurant review app restaurant page before and after" alt="restaurant review app restaurant page before and after">
+<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-home.jpg" title="restaurant reviews app home page before and after" alt="restaurant reviews app home page before and after">
+<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-restaurant.jpg" title="restaurant reviews app restaurant page before and after" alt="restaurant reviews app restaurant page before and after">
+<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage1-reviews.jpg" title="restaurant reviews app restaurant page before and after" alt="restaurant reviews app restaurant page before and after">
+
+---
+<a name="stage2"/>
+## Project Overview: Stage 2
+
+For the **Restaurant Reviews** projects, you will incrementally convert a static webpage to a mobile-ready web application. In **Stage Two**, you will take the responsive, accessible design you built in **Stage One** and connect it to an external server. You’ll begin by using asynchronous JavaScript to request JSON data from the server. You’ll store data received from the server in an offline database using IndexedDB, which will create an app shell architecture. Finally, you’ll work to optimize your site to meet performance benchmarks, which you’ll test using [Lighthouse](https://developers.google.com/web/tools/lighthouse/).
+
+### Specification
+
+You will be provided code for a Node development server and a README for getting the server up and running locally on your computer. The README will also contain the API you will need to make JSON requests to the server. Once you have the server up, you will begin the work of improving your **Stage One** project code.
+
+The core functionality of the application will not change for this stage. Only the source of the data will change. You will use the `fetch()` API to make requests to the server to populate the content of your Restaurant Reviews app.
+
+### Requirements
+
+**Use server data instead of local memory** In the first version of the application, all of the data for the restaurants was stored in the local application. You will need to change this behavior so that you are pulling all of your data from the server instead, and using the response data to generate the restaurant information on the main page and the detail page.
+
+**Use IndexedDB to cache JSON responses** In order to maintain offline use with the development server you will need to update the service worker to store the JSON received by your requests using the IndexedDB API. As with Stage One, any page that has been visited by the user should be available offline, with data pulled from the shell database.
+
+**Meet the minimum performance requirements** Once you have your app working with the server and working in offline mode, you’ll need to measure your site performance using Lighthouse.
+
+Lighthouse measures performance in four areas, but your review will focus on three:
+
+- **Progressive Web App** score should be at 90 or better.
+- **Performance** score should be at 70 or better.
+- **Accessibility** score should be at 90 or better.
+
+You can audit your site's performance with Lighthouse by using the Audit tab of Chrome Dev Tools.
+
+### Steps to complete
+
+1. Fork and clone the [server repository](https://github.com/udacity/mws-restaurant-stage-2). You’ll use this development server to develop your project code.
+2. Change the data source for your restaurant requests to pull JSON from the server, parse the response and use the response to generate the site UI.
+3. Cache the JSON responses for offline use by using the IndexedDB API.
+4. Follow the recommendations provided by Lighthouse to achieve the required performance targets.
+5. Submit your project code for review.
+---
+### What I've changed
+I used **webpack** to help with compression, minification, linting, live editing, transpiling, bundling, and automating various tasks. The `webpack.common.js` file contains the shared configuration of both developement and production builds, whereas the `webpack.dev.js` and `webpack.prod.js` handle their respective builds.
+
+**To test the project:**
+1. Make sure the [Local Development API Server](https://github.com/chadpjontek/mws-restaurant-stage-2) is installed and started.
+2. Clone this repo. `git clone https://github.com/chadpjontek/Restaurant-Reviews.git`
+3. Install all dependencies. `npm i`
+4. Navigate to the `dist` folder `cd dist` before running your local server `py -m http.server 8000`
+
+**Note:** I've created a dev and start script for development purposes which will overwrite or delete the `dist` directory. If you choose to use them you will need to re-build the production build for performance testing. Do this by running `npm run build`
+#### Application Data and Offline Use
+- The client application pulls restaurant data from the development server, parses the JSON response, and uses the information to render the appropriate sections of the application UI.
+- The client application works offline. JSON responses are cached using the IndexedDB API. All data previously accessed while connected is reachable while offline.
+#### Responsive Design and Accessibility
+- The application maintains a responsive design on mobile, tablet and desktop viewports.
+- The application retains accessibility features from the Stage 1 project. Images have alternate text, the application uses appropriate focus management for navigation, and semantic elements and ARIA attributes are used correctly.
+#### Performance
+- Lighthouse targets for each category exceed:
+  - Progressive Web App: >90
+  - Performance: >70
+  - Accessibility: >90
+
+#### Before and after screenshots
+
+<img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage2-lighthouse-perf.jpg" title="restaurant reviews app lighthouse scores" alt="restaurant reviews app lighthouse scores">
