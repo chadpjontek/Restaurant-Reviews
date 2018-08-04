@@ -10,6 +10,7 @@
 - Stage 3 - in progess
 
 <a name="stage1"/>
+
 ## Project Overview: Stage 1
 
 For the **Restaurant Reviews** projects, you will incrementally convert a static webpage to a mobile-ready web application. In **Stage One**, you will take a static design that lacks accessibility and convert the design to be responsive on different sized displays and accessible for screen reader use. You will also add a service worker to begin the process of creating a seamless offline experience for your users.
@@ -56,6 +57,7 @@ Most of the code in this project has been written to the ES6 JavaScript specific
 
 ---
 <a name="stage2"/>
+
 ## Project Overview: Stage 2
 
 For the **Restaurant Reviews** projects, you will incrementally convert a static webpage to a mobile-ready web application. In **Stage Two**, you will take the responsive, accessible design you built in **Stage One** and connect it to an external server. You’ll begin by using asynchronous JavaScript to request JSON data from the server. You’ll store data received from the server in an offline database using IndexedDB, which will create an app shell architecture. Finally, you’ll work to optimize your site to meet performance benchmarks, which you’ll test using [Lighthouse](https://developers.google.com/web/tools/lighthouse/).
@@ -112,6 +114,6 @@ I used **webpack** to help with compression, minification, linting, live editing
   - Performance: >70
   - Accessibility: >90
 
-#### Before and after screenshots
+#### Lighthouse scores
 
 <img src="https://github.com/chadpjontek/resources/raw/master/images/restaurant-reviews-stage2-lighthouse-perf.jpg" title="restaurant reviews app lighthouse scores" alt="restaurant reviews app lighthouse scores">
