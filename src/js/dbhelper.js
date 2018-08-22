@@ -22,7 +22,8 @@ export default class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337; // Change this to your server port
-    return `http://localhost:${port}/restaurants/`;
+    return `http://localhost:${port}/`; // Development server
+    // return 'https://chadpjontek-mws-restaurant-stage-3.glitch.me/'; // Demo server
   }
 
   /**
@@ -32,29 +33,50 @@ export default class DBHelper {
     if (!navigator.serviceWorker) {
       return Promise.resolve();
     }
-    return idb.open('restaurant-reviews-app', 1, function (upgradeDb) {
-      const store = upgradeDb.createObjectStore('restaurants', {
-        keyPath: 'id'
-      });
-      store.createIndex('cuisine', 'cuisine_type');
-      store.createIndex('neighborhood', 'neighborhood');
+    return idb.open('restaurant-reviews-app', 2, function (upgradeDb) {
+      switch (upgradeDb.oldVersion) {
+        case 0:
+          const store = upgradeDb.createObjectStore('restaurants', {
+            keyPath: 'id'
+          });
+          store.createIndex('cuisine', 'cuisine_type');
+          store.createIndex('neighborhood', 'neighborhood');
+        case 1:
+          const reviewsStore = upgradeDb.createObjectStore('reviews', {
+            keyPath: 'id'
+          });
+          reviewsStore.createIndex('restaurant', 'restaurant_id');
+      }
     });
   }
 
   /**
    * Called once on main page load to update database.
    */
-  static addRestaurantsToDb() {
+  static updateDb() {
     DBHelper.openDatabase()
       .then(db => {
         if (!db) return;
-        fetch(DBHelper.DATABASE_URL)
+        fetch(DBHelper.DATABASE_URL + 'restaurants')
           .then(response => response.json())
           .then(restaurants => {
             const tx = db.transaction('restaurants', 'readwrite');
             const store = tx.objectStore('restaurants');
             restaurants.forEach(restaurant => {
               store.put(restaurant);
+            });
+          });
+      });
+    DBHelper.openDatabase()
+      .then(db => {
+        if (!db) return;
+        fetch(DBHelper.DATABASE_URL + 'reviews')
+          .then(response => response.json())
+          .then(reviews => {
+            const tx = db.transaction('reviews', 'readwrite');
+            const store = tx.objectStore('reviews');
+            reviews.forEach(review => {
+              store.put(review);
             });
           });
       });
@@ -74,6 +96,20 @@ export default class DBHelper {
   }
 
   /**
+   * Get all reviews from database.
+   */
+  static getReviewsFromDB(id) {
+    return DBHelper.openDatabase()
+      .then(db => {
+        return db.transaction('reviews')
+          .objectStore('reviews')
+          .index('restaurant')
+          .getAll(parseInt(id));
+      })
+      .catch((error => console.log(`There was an error fetching the restaurants: ${error}`)));
+  }
+
+  /**
    * Fetch all restaurants.
    * Get from db if available, otherwise get from network.
    */
@@ -81,16 +117,37 @@ export default class DBHelper {
     DBHelper.getRestaurantsFromDb()
       .then(restaurants => {
         if (restaurants.length > 0) {
-          console.log('fetching from database');
+          console.log('fetching restaurants from database');
           callback(null, restaurants);
         } else {
-          console.log('fetching from network');
-          fetch(DBHelper.DATABASE_URL)
+          console.log('fetching restaurants from network');
+          fetch(DBHelper.DATABASE_URL + 'restaurants')
             .then(response => response.json())
             .then(restaurants => callback(null, restaurants));
         }
       })
       .catch((error => console.log(`There was an error fetching the restaurants: ${error}`)));
+  }
+
+  /**
+   * Fetch reviews by restaurant.
+   * Get from db if available, otherwise get from network.
+   */
+
+  static fetchReviewsById(id, callback) {
+    DBHelper.getReviewsFromDB(id)
+      .then(reviews => {
+        if (reviews.length > 0) {
+          console.log('fetching reviews from database');
+          callback(null, reviews);
+        } else {
+          console.log('fetching reviews form network');
+          fetch(DBHelper.DATABASE_URL + 'reviews/?restaurant_id=' + id)
+            .then(response => response.json())
+            .then(reviews => callback(null, reviews));
+        }
+      })
+      .catch((error => console.log(`There was an error fetching the reviews: ${error}`)));
   }
 
   /**

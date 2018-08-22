@@ -74,7 +74,7 @@ getResponsiveImages();
  */
 document.addEventListener('DOMContentLoaded', () => {
   initMap();
-  DBHelper.addRestaurantsToDb();
+  DBHelper.updateDb();
   fetchNeighborhoods();
   fetchCuisines();
 });

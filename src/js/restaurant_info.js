@@ -63,6 +63,11 @@ function initMap() {
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
     }
   });
+  fetchReviewsFromURL((error, reviews) => {
+    if (error) { // Got an error!
+      console.log(error);
+    }
+  });
 }
 
 /**
@@ -91,6 +96,31 @@ function fetchRestaurantFromURL(callback) {
 }
 
 /**
+ * Get current reiviews from page URL.
+ */
+function fetchReviewsFromURL(callback) {
+  if (self.reviews) { // Reviews already fetched!
+    callback(null, self.reviews);
+    return;
+  }
+  const id = getParameterByName('id');
+  if (!id) { // no id found in URL
+    const error = 'No restuarant id in URL';
+    callback(error, null);
+  } else {
+    DBHelper.fetchReviewsById(id, (error, reviews) => {
+      self.reviews = reviews;
+      if (!reviews) {
+        console.error(error);
+        return;
+      }
+      fillReviewsHTML();
+      callback(null, reviews);
+    });
+  }
+}
+
+/**
  * Create restaurant HTML and add it to the webpage
  */
 function fillRestaurantHTML(restaurant = self.restaurant) {
@@ -112,8 +142,6 @@ function fillRestaurantHTML(restaurant = self.restaurant) {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
-  fillReviewsHTML();
 }
 
 /**
@@ -141,7 +169,7 @@ function fillRestaurantHoursHTML(operatingHours = self.restaurant.operating_hour
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-function fillReviewsHTML(reviews = self.restaurant.reviews) {
+function fillReviewsHTML(reviews = self.reviews) {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
@@ -173,7 +201,8 @@ function createReviewHTML(review) {
   li.className = 'reviews-list__li';
 
   const date = document.createElement('span');
-  date.innerHTML = review.date;
+  const options = { year: 'numeric', month: 'long', day: 'numeric'};
+  date.innerHTML = new Date(review.updatedAt).toLocaleString('en-US', options);
   date.className = 'reviews-list__li__date';
   name.appendChild(date);
 
