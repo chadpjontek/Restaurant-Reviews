@@ -47,6 +47,36 @@
         <!-- end restaurant -->
         <!-- Beginning reviews -->
         <section id="reviews-container" class="reviews-container">
+          <button id="add-review" class="add-review">Add Review</button>
+          <div id="add-review-modal" class="add-review-modal modal">
+            <div class="modal-content">
+              <form>
+                <fieldset>
+                  <legend>Add Review:</legend>
+                  <label for="name">Name:</label>
+                  <br>
+                  <input class="modal-content__edittext" id="name" type="text" name="name"><br>
+                  <br>
+                  <label id="rating-label" for="star-rating">Rating:</label>
+                  <br>
+                  <div role="radiogroup" aria-labelledby="rating-label" id="star-rating" class="star-rating">
+                    <input type="radio" aria-label="1 star" name="rating" value="1"><i></i>
+                    <input type="radio" aria-label="2 star" name="rating" value="2"><i></i>
+                    <input type="radio" aria-label="3 star" name="rating" value="3"><i></i>
+                    <input type="radio" aria-label="4 star" name="rating" value="4"><i></i>
+                    <input type="radio" aria-label="5 star" name="rating" value="5"><i></i>
+                  </div>
+                  <br>
+                  <label for="review">Review:</label>
+                  <br>
+                  <textarea id="review" class="modal-content__textarea " name="review" cols="30" rows="30"></textarea><br>
+                  <br>
+                  <button id="submit" class="submit" aria-label="Submit Review" type="button" onclick="addReview()">Submit</button>
+                  <button class="cancel" type="button">Cancel</button>
+                </fieldset>
+              </form>
+            </div>
+          </div>
           <ul id="reviews-list" class="reviews-list"></ul>
         </section>
         <!-- End reviews -->

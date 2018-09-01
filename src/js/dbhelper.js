@@ -286,4 +286,36 @@ export default class DBHelper {
     marker.addTo(map);
     return marker;
   }
+
+  /**
+   * Post a review
+   */
+  static addReview(formData, callback) {
+    // Turn off click events to prevent multiple submisions
+    document.getElementById('submit').onclick = null;
+
+    // Add review to the queue
+    // DBHelper.addToQueue(formData, (error, result) => {
+    //   if (error) {
+    //     callback(error, null);
+    //     return;
+    //   }
+    //   callback(null, result);
+    // });
+
+
+    // POST review to server
+    fetch('http://localhost:1337/reviews', {
+      body: JSON.stringify(formData),
+      mode: 'cors',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+    }).then(() => {
+      callback(null, 'Review Added!');
+    }).catch((error) => {
+      callback(error, null);
+    });
+  }
 }

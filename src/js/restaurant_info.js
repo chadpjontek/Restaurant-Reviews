@@ -201,7 +201,7 @@ function createReviewHTML(review) {
   li.className = 'reviews-list__li';
 
   const date = document.createElement('span');
-  const options = { year: 'numeric', month: 'long', day: 'numeric'};
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
   date.innerHTML = new Date(review.updatedAt).toLocaleString('en-US', options);
   date.className = 'reviews-list__li__date';
   name.appendChild(date);
@@ -244,4 +244,132 @@ function getParameterByName(name, url) {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+/**
+ * Add review modal
+ */
+// Will hold previously focused element
+let focusedElementBeforeModal;
+
+// Get the modal
+const addReviewModal = document.getElementById('add-review-modal');
+
+// Get the button that opens the modal
+const addReviewBtn = document.getElementById('add-review');
+
+// Get the button element that closes the modal
+const cancel = document.getElementsByClassName('cancel')[0];
+
+// When the user clicks on the button, open the modal
+addReviewBtn.onclick = function () {
+  // Save current focus
+  focusedElementBeforeModal = document.activeElement;
+  // Listen for and trap the keyboard
+  addReviewModal.addEventListener('keydown', trapTabKey);
+  // Find all focusable children
+  const focusableElementsString = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
+  let focusableElements = addReviewModal.querySelectorAll(focusableElementsString);
+  // Convert Nodelist to Array
+  focusableElements = Array.prototype.slice.call(focusableElements);
+  const firstTabStop = focusableElements[0];
+  const lastTabStop = focusableElements[focusableElements.length - 1];
+  // Display modal
+  addReviewModal.style.display = 'block';
+  // Focus first child
+  firstTabStop.focus();
+
+  function trapTabKey(e) {
+    // Check for TAB key press
+    if (e.keyCode === 9) {
+
+      // SHIFT + TAB
+      if (e.shiftKey) {
+        if (document.activeElement === firstTabStop) {
+          e.preventDefault();
+          lastTabStop.focus();
+        }
+
+        // TAB
+      } else {
+        if (document.activeElement === lastTabStop) {
+          e.preventDefault();
+          firstTabStop.focus();
+        }
+      }
+    }
+
+    // ESCAPE
+    if (e.keyCode === 27) {
+      closeModal();
+    }
+  }
+};
+
+// When the user clicks on cancel btn, close the modal
+cancel.onclick = function () {
+  closeModal();
+};
+
+function closeModal() {
+  addReviewModal.style.display = 'none';
+  focusedElementBeforeModal.focus();
+}
+
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function (event) {
+  if (event.target == addReviewModal) {
+    addReviewModal.style.display = 'none';
+  }
+};
+
+// Add Review
+window.addReview = function () {
+  event.preventDefault();
+  const restaurant_id = parseInt(getParameterByName('id'));
+  const name = document.getElementById('name');
+  const rating = document.querySelector('input[name="rating"]:checked');
+  console.log('rating', rating);
+
+  const comments = document.getElementById('review');
+  if (name.value === '') {
+    return name.classList.add('invalid');
+  } else {
+    name.classList.remove('invalid');
+  }
+  if (rating === null || isNaN(rating.value)) {
+    return document.getElementById('rating-label').classList.add('invalid');
+  } else {
+    document.getElementById('rating-label').classList.remove('invalid');
+  }
+  if (comments.value === '') {
+    return comments.classList.add('invalid');
+  } else {
+    comments.classList.remove('invalid');
+  }
+  const formData = {
+    restaurant_id: restaurant_id,
+    name: cleanInput(name.value),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    rating: rating.value,
+    comments: cleanInput(comments.value)
+  };
+  DBHelper.addReview(formData, (error, response) => {
+    if (error) {
+      console.error(error);
+      closeModal();
+      return;
+    } else {
+      console.log(response);
+      closeModal();
+      return;
+    }
+  });
+};
+
+// Prevent HTML and script injections on client
+function cleanInput(input) {
+  return input.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
