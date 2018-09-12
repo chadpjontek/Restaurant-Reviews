@@ -28,20 +28,29 @@ import '../styles/styles.scss';
 const responsiveImages = {};
 
 /**
- * Initialize map as soon as the page is loaded.
+ * when the DOM loads...
  */
 document.addEventListener('DOMContentLoaded', () => {
   registerSW();
-  initMap();
+  const restaurant_id = parseInt(getParameterByName('id'));
+  DBHelper.postReviewQueue((error, response) => {
+    if (error) {
+      return console.log(error);
+    }
+    const elems = Array.from(document.getElementsByClassName('offline'));
+    elems.forEach(e => e.classList.remove('offline'));
+    DBHelper.updateReviews(restaurant_id);
+  });
+  init();
   for (let i = 1; i < 11; i++) {
     responsiveImages[i] = require(`../images/${i}.jpg`);
   }
 });
 
 /**
- * Initialize leaflet map
+ * Initialize page
  */
-function initMap() {
+function init() {
   fetchRestaurantFromURL((error, restaurant) => {
     if (error) { // Got an error!
       console.error(error);
@@ -74,10 +83,10 @@ function initMap() {
  * Get current restaurant from page URL.
  */
 function fetchRestaurantFromURL(callback) {
-  if (self.restaurant) { // restaurant already fetched!
-    callback(null, self.restaurant);
-    return;
-  }
+  // if (self.restaurant) { // restaurant already fetched!
+  //   callback(null, self.restaurant);
+  //   return;
+  // }
   const id = getParameterByName('id');
   if (!id) { // no id found in URL
     const error = 'No restaurant id in URL';
@@ -183,7 +192,7 @@ function fillReviewsHTML(reviews = self.reviews) {
     return;
   }
   const ul = document.getElementById('reviews-list');
-  reviews.forEach(review => {
+  reviews.reverse().forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
   container.appendChild(ul);
@@ -201,7 +210,7 @@ function createReviewHTML(review) {
   li.className = 'reviews-list__li';
 
   const date = document.createElement('span');
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
   date.innerHTML = new Date(review.updatedAt).toLocaleString('en-US', options);
   date.className = 'reviews-list__li__date';
   name.appendChild(date);
@@ -330,8 +339,6 @@ window.addReview = function () {
   const restaurant_id = parseInt(getParameterByName('id'));
   const name = document.getElementById('name');
   const rating = document.querySelector('input[name="rating"]:checked');
-  console.log('rating', rating);
-
   const comments = document.getElementById('review');
   if (name.value === '') {
     return name.classList.add('invalid');
@@ -356,20 +363,116 @@ window.addReview = function () {
     rating: rating.value,
     comments: cleanInput(comments.value)
   };
-  DBHelper.addReview(formData, (error, response) => {
-    if (error) {
-      console.error(error);
+  DBHelper.addReview(formData, restaurant_id, (error, response, unQueueable) => {
+    // Offline and unable to queue for later
+    if (unQueueable) {
+      console.log(error);
       closeModal();
+      displayMsgModal(error, 'error');
       return;
-    } else {
-      console.log(response);
+    }
+    // Offline and added to the queue
+    if (error && !unQueueable) {
+      console.log(error);
+      const ul = document.getElementById('reviews-list');
+      const li = ul.appendChild(createReviewHTML(formData));
+      const liName = li.querySelector('.reviews-list__li__name');
+      liName.classList.add('offline');
+      ul.insertBefore(li, ul.childNodes[0]);
       closeModal();
+      name.value = null;
+      comments.value = null;
+      displayMsgModal(error, 'error');
+      return;
+    }
+    // Review added
+    if (error === null) {
+      console.log(response);
+      DBHelper.updateReviews(restaurant_id);
+      const ul = document.getElementById('reviews-list');
+      const li = ul.appendChild(createReviewHTML(formData));
+      ul.insertBefore(li, ul.childNodes[0]);
+      closeModal();
+      name.value = null;
+      comments.value = null;
+      displayMsgModal(response, 'success');
       return;
     }
   });
 };
 
+/**
+ * Message modal on review submission
+ */
+function displayMsgModal(message, type) {
+  const msgModal = document.getElementById('msg-modal');
+  const content = document.getElementById('msg-modal-content');
+  fadeIn(content);
+  msgModal.style.display = 'block';
+  content.classList.toggle('fadeIn');
+  const msg = document.getElementById('msg');
+  msg.innerHTML = message;
+  if (type === 'error') {
+    content.classList.remove('success');
+    content.classList.add('error');
+  } else {
+    content.classList.remove('error');
+    content.classList.add('success');
+  }
+  setTimeout(() => {
+    fadeOut(content);
+  }, 4500);
+  setTimeout(() => {
+    msgModal.style.display = 'none';
+  }, 5000);
+}
+
+function fadeOut(message) {
+  message.style.opacity = 1;
+
+  (function fade() {
+    if ((message.style.opacity -= .1) < 0) {
+      message.style.display = 'none';
+      message.classList.add('isDisplayed');
+    } else {
+      requestAnimationFrame(fade);
+    }
+  })();
+}
+
+function fadeIn(message) {
+  if (message.classList.contains('isDisplayed')) {
+    message.classList.remove('isDisplayed');
+  }
+  message.style.opacity = 0;
+  message.style.display = 'block';
+
+  (function fade() {
+    var val = parseFloat(message.style.opacity);
+    if (!((val += .1) > 1)) {
+      message.style.opacity = val;
+      requestAnimationFrame(fade);
+    }
+  })();
+}
+
 // Prevent HTML and script injections on client
 function cleanInput(input) {
   return input.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
+
+/**
+ * When the user comes online...
+ */
+window.addEventListener('online', (() => {
+  const restaurant_id = parseInt(getParameterByName('id'));
+  DBHelper.postReviewQueue((error, response) => {
+    if (error) {
+      return console.log(error);
+    }
+    const elems = Array.from(document.getElementsByClassName('offline'));
+    elems.forEach(e => e.classList.remove('offline'));
+    displayMsgModal(response, 'success');
+    DBHelper.updateReviews(restaurant_id);
+  });
+}));

@@ -74,9 +74,14 @@ getResponsiveImages();
  */
 document.addEventListener('DOMContentLoaded', () => {
   initMap();
-  DBHelper.updateDb();
   fetchNeighborhoods();
   fetchCuisines();
+  DBHelper.saveFavoriteQueue((error, response) => {
+    if (error) {
+      return console.log(error);
+    }
+    DBHelper.updateRestaurants();
+  });
 });
 
 /**
@@ -224,7 +229,41 @@ function createRestaurantHTML(restaurant) {
   more.setAttribute('aria-label', 'View details of ' + restaurant.name);
   li.append(more);
 
+  // Create an accessible SVG that acts as a favorite toggle
+  const favoriteButton = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  const favoriteIcon = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  favoriteButton.classList.add('favorite-svg');
+  favoriteIcon.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#icon-heart');
+  favoriteButton.setAttribute('id', `cb${restaurant.id}`);
+  favoriteButton.setAttribute('role', 'button');
+  favoriteButton.setAttribute('aria-labelledby', 'favorite-title favorite-desc');
+  favoriteButton.setAttribute('tabindex', '0');
+  favoriteIcon.classList.add('favorite-use');
+  if (restaurant.is_favorite === 'true') {
+    favoriteIcon.classList.add('is-favorite');
+    favoriteButton.setAttribute('aria-pressed', 'true');
+  } else {
+    favoriteButton.setAttribute('aria-pressed', 'false');
+  }
+  favoriteButton.addEventListener('click', toggleFavorite.bind(null, restaurant.id));
+  favoriteButton.addEventListener('keydown', handleBtnKeyPress.bind(null, restaurant.id));
+  li.append(favoriteButton);
+  favoriteButton.appendChild(favoriteIcon);
   return li;
+}
+
+/**
+ * Handle keydown for favorite toggle buttons
+ */
+function handleBtnKeyPress(id, event) {
+  console.log('id', id);
+  console.log('event', event);
+
+  if (event.key === ' ' || event.key === 'Enter') {
+    console.log('fire!');
+    event.preventDefault();
+    toggleFavorite(id);
+  }
 }
 
 /**
@@ -241,3 +280,51 @@ function addMarkersToMap(restaurants = self.restaurants) {
     self.markers.push(marker);
   });
 }
+
+/**
+ * Toggle favorite restaurant
+ */
+function toggleFavorite(id) {
+  const favoriteButton = document.getElementById(`cb${id}`);
+  const favoriteIcon = favoriteButton.firstChild;
+  let is_favorite;
+  // Get the current state of the favorite button
+  if (favoriteIcon.classList.contains('is-favorite')) {
+    is_favorite = 'true';
+  } else {
+    is_favorite = 'false';
+  }
+  // attempt to toggle
+  DBHelper.toggleFavorite(id, is_favorite, (error, response) => {
+    if (error && error !== 'favorited' && error !== 'unfavorited') {
+      // Something went wrong
+      console.log(error);
+      return;
+    }
+    // User is offline
+    if (error) {
+      console.log(`Offline. ${error} added to queue.`);
+    }
+    // Change the state of the button
+    if (is_favorite === 'true') {
+      favoriteIcon.classList.remove('is-favorite');
+      favoriteButton.setAttribute('aria-pressed', 'false');
+      return;
+    }
+    favoriteIcon.classList.add('is-favorite');
+    favoriteButton.setAttribute('aria-pressed', 'true');
+  });
+}
+
+/**
+ * When the user comes online...
+ */
+window.addEventListener('online', (() => {
+  DBHelper.saveFavoriteQueue((error, response) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log(response);
+    DBHelper.updateRestaurants();
+  });
+}));

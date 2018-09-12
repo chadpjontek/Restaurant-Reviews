@@ -46,7 +46,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack --config webpack.dev.js",
+    "dev": "webpack --config webpack.dev.js && cd dist && py -m http.server 8000",
+    "incog": "start chrome http://localhost:8000/ -incognito --new-window --window-size=1280,1400 --window-position=0,0",
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js"
   },

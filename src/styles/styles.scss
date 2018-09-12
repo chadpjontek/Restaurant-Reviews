@@ -144,7 +144,7 @@ nav h1 {
 nav h1 a {
   color: #fff;
   font-size: 1.1rem;
-  font-weight: 200;
+  font-weight: 300;
   letter-spacing: 0.35rem;
   text-transform: uppercase;
 }
@@ -249,7 +249,7 @@ nav h1 a {
 
 .restaurants-list__li__name{
   color: var(--primary-font-color);
-  font: 200 1.2rem/1.3 Arial,sans-serif;
+  font: 300 1.2rem/1.3 Arial,sans-serif;
   letter-spacing: 0;
   margin: 1.6rem 0 0.625rem;
   padding-left: 0.625rem;
@@ -265,17 +265,35 @@ nav h1 a {
 
 .restaurants-list__li__a {
   background-color: var(--secondary-bg-color);
-  border-bottom: 3px solid #eee;
+  border: none;
   color: #fff;
   display: inline-block;
   font-size: 0.8rem;
-  margin: 0.9375rem 0 5px 0.625rem;
-  padding: 0.5rem 1.875rem 0.625rem;
+  margin: 0.9375rem 0 0.625rem 0.625rem;
+  padding: 0.5rem 1.5rem;
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
 }
 
+.favorite-svg {
+  float: right;
+  width: 2rem;
+  height: 2rem;
+  margin: 1rem 1rem 0 0;
+}
+
+.favorite-use {
+  float: right;
+  fill: var(--secondary-font-color);
+  cursor: pointer;
+  transition: fill .2s ease;
+}
+
+.is-favorite {
+  fill: var(--primary-font-color);
+  transition: fill .2s ease;
+}
 
 /* ====================== Restaurant Details ====================== */
 .inside {
@@ -294,7 +312,7 @@ nav h1 a {
 
 .main--restaurant-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 50vw 47vw;
   grid-template-rows: 1fr;
   grid-template-areas:
     "restaurant map"
@@ -331,7 +349,7 @@ nav h1 a {
 
 .restaurant-name {
   color: var(--primary-font-color);
-  font: 200 1.4rem/1.1 Arial,sans-serif;
+  font: 300 1.4rem/1.1 Arial,sans-serif;
   letter-spacing: 0;
   margin: 0.9375rem 0 1.875rem;
   text-transform: uppercase;
@@ -382,7 +400,7 @@ nav h1 a {
 }
 
 .reviews-list {
-  margin: 0;
+  margin: 1rem 0 0 0;
   padding: 0;
 }
 
@@ -432,6 +450,11 @@ nav h1 a {
 .reviews-list__li__comments {
   margin-top: 0.5rem;
   padding: 0 0.8rem 0.8rem 0.8rem;
+  overflow-wrap: break-word;
+}
+
+.offline {
+  background: var(--primary-font-color);
 }
 
 
@@ -446,15 +469,17 @@ nav h1 a {
   width: 100%;
   height: 100%;
   background-color: rgba(0,0,0,0.5);
+  overflow-y: auto;
 }
 
 /* Content */
 .modal-content {
   background-color: #fefefe;
-  margin: 20% auto;
+  margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 80%;
+  max-width: 1000px;
 }
 
 .modal-content legend {
@@ -473,8 +498,9 @@ nav h1 a {
   box-shadow: 0 0 5px var(--secondary-font-color);
 }
 
-.modal-content textarea {
+.modal-content__textarea {
   height: 170px;
+  resize: none;
 }
 
 .modal-content__edittext:focus, .modal-content__textarea:focus {
@@ -574,6 +600,44 @@ nav h1 a {
 }
 
 
+/* ====================== Message Modal ====================== */
+/* Background */
+.msg-modal {
+  display: none;
+  position: fixed;
+  z-index: 1111;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0);
+}
+/* Content */
+.msg-modal-content {
+  margin: 20% auto;
+  padding: 20px;
+  width: 80%;
+  max-width: 800px;
+}
+
+.msg {
+  color: white;
+  text-align: center;
+}
+
+.error {
+  background-color: var(--primary-font-color);
+}
+
+.success {
+  background-color: var(--primary-bg-color);
+}
+
+.isDisplayed {
+  display: none;
+}
+
+
 /* ====================== Media queries ====================== */
 @media screen and (max-width: 800px) {
 
@@ -590,6 +654,14 @@ nav h1 a {
     overflow-y: visible;
     height: 100%;
   }
+
+  .reviews-container {
+    width: 97vw;
+  }
+
+  .modal-content {
+    margin: 20% auto;
+  }
 }
 
 @media screen and (max-width: 500px) {
@@ -598,17 +670,20 @@ nav h1 a {
     height: 300px;
   }
 
-  .restaurant-container {
-    padding: 0 0.5rem 1.875rem;
-  }
-
   .reviews-container {
     padding: 0.5rem 0.5rem 0;
+    width: 96vw;
   }
 
   .modal-content {
     width: 95%;
     padding: 10px;
     margin: 10% auto;
+  }
+}
+
+@media (hover:hover) {
+  .favorite-use:hover {
+    fill: var(--secondary-bg-color);
   }
 }

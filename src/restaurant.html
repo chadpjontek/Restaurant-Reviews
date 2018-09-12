@@ -29,10 +29,11 @@
     </header>
     <!-- End header -->
     <!-- Beginning main -->
-    <main id="maincontent" class="main main--restaurant-content">
+    <main id="maincontent" class="main--restaurant-content">
       <!-- Beginning map -->
       <section id="map-container" class="inside__map-container">
-        <div id="map" class="map map--inside" tabindex="0" role="application" aria-label="Google map with restaurant location" title="Google map with restaurant location"></div>
+        <div id="map" class="map map--inside" tabindex="0" role="application" aria-label="Google map with restaurant location"
+          title="Google map with restaurant location"></div>
       </section>
       <!-- End map -->
       <!-- Beginning restaurant -->
@@ -55,11 +56,11 @@
                   <legend>Add Review:</legend>
                   <label for="name">Name:</label>
                   <br>
-                  <input class="modal-content__edittext" id="name" type="text" name="name"><br>
+                  <input aria-required="true" class="modal-content__edittext" id="name" type="text" name="name" maxlength="20"><br>
                   <br>
                   <label id="rating-label" for="star-rating">Rating:</label>
                   <br>
-                  <div role="radiogroup" aria-labelledby="rating-label" id="star-rating" class="star-rating">
+                  <div aria-required="true" role="radiogroup" aria-labelledby="rating-label" id="star-rating" class="star-rating">
                     <input type="radio" aria-label="1 star" name="rating" value="1"><i></i>
                     <input type="radio" aria-label="2 star" name="rating" value="2"><i></i>
                     <input type="radio" aria-label="3 star" name="rating" value="3"><i></i>
@@ -69,7 +70,7 @@
                   <br>
                   <label for="review">Review:</label>
                   <br>
-                  <textarea id="review" class="modal-content__textarea " name="review" cols="30" rows="30"></textarea><br>
+                  <textarea aria-required="true" id="review" class="modal-content__textarea " name="review"></textarea><br>
                   <br>
                   <button id="submit" class="submit" aria-label="Submit Review" type="button" onclick="addReview()">Submit</button>
                   <button class="cancel" type="button">Cancel</button>
@@ -77,20 +78,26 @@
               </form>
             </div>
           </div>
-          <ul id="reviews-list" class="reviews-list"></ul>
-        </section>
-        <!-- End reviews -->
+          <div class="msg-modal" id="msg-modal">
+            <div class="msg-modal-content isDisplayed" id="msg-modal-content">
+              <p class="msg" id="msg"></p>
+            </div>
+          </div>
       </div>
-    </main>
-    <!-- End main -->
-    <!-- Beginning footer -->
-    <footer id="footer" class="footer">
-      Copyright (c) 2017
-      <a href="/">
-        <strong>Restaurant Reviews</strong>
-      </a> All Rights Reserved.
-    </footer>
-    <!-- End footer -->
+      <ul id="reviews-list" class="reviews-list"></ul>
+      </section>
+      <!-- End reviews -->
+  </div>
+  </main>
+  <!-- End main -->
+  <!-- Beginning footer -->
+  <footer id="footer" class="footer">
+    Copyright (c) 2017
+    <a href="/">
+      <strong>Restaurant Reviews</strong>
+    </a> All Rights Reserved.
+  </footer>
+  <!-- End footer -->
   </div>
 </body>
 

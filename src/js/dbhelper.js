@@ -46,14 +46,20 @@ export default class DBHelper {
             keyPath: 'id'
           });
           reviewsStore.createIndex('restaurant', 'restaurant_id');
+          upgradeDb.createObjectStore('reviewQueue', {
+            autoIncrement: true
+          });
+          upgradeDb.createObjectStore('favoriteQueue', {
+            autoIncrement: true
+          });
       }
     });
   }
 
   /**
-   * Called once on main page load to update database.
+   * Called once on main page load to update restaurant data.
    */
-  static updateDb() {
+  static updateRestaurants() {
     DBHelper.openDatabase()
       .then(db => {
         if (!db) return;
@@ -67,10 +73,16 @@ export default class DBHelper {
             });
           });
       });
+  }
+
+  /**
+   * Called once on restaurant page load to update review data.
+   */
+  static updateReviews(id) {
     DBHelper.openDatabase()
       .then(db => {
         if (!db) return;
-        fetch(DBHelper.DATABASE_URL + 'reviews')
+        fetch(DBHelper.DATABASE_URL + 'reviews/?restaurant_id=' + id)
           .then(response => response.json())
           .then(reviews => {
             const tx = db.transaction('reviews', 'readwrite');
@@ -288,34 +300,194 @@ export default class DBHelper {
   }
 
   /**
-   * Post a review
+   * User attempt to add a review
    */
-  static addReview(formData, callback) {
-    // Turn off click events to prevent multiple submisions
-    document.getElementById('submit').onclick = null;
+  static addReview(formData, id, callback) {
+    // Attempt to POST review to server.
+    DBHelper.postReview(formData)
+      .then(() => {
+        callback(null, 'Review Added!');
+      }).catch((error) => {
+        // Fetch failed so add to queue to POST when online
+        DBHelper.addToReviewQueue(formData, (err, res) => {
+          if (err) {
+            callback(err, null, true);
+          } else {
+            callback(res, null);
+          }
+        });
+      });
+  }
 
-    // Add review to the queue
-    // DBHelper.addToQueue(formData, (error, result) => {
-    //   if (error) {
-    //     callback(error, null);
-    //     return;
-    //   }
-    //   callback(null, result);
-    // });
+  /**
+   * Add to queue
+   */
+  static addToReviewQueue(formData, callback) {
+    DBHelper.openDatabase()
+      .then(db => {
+        const tx = db.transaction('reviewQueue', 'readwrite');
+        tx.objectStore('reviewQueue')
+          .put(formData)
+          .then(() => {
+            callback(null, 'It appears you\'re offline. We\'ll post your review as soon as you connect!');
+          });
+        return tx.complete;
+      })
+      .catch(error => {
+        callback('It appears you\'re offline. Please try again later.', null);
+      });
+  }
 
-
-    // POST review to server
-    fetch('http://localhost:1337/reviews', {
-      body: JSON.stringify(formData),
+  /**
+   * POST a review
+   */
+  static postReview(review) {
+    return fetch(DBHelper.DATABASE_URL + 'reviews', {
+      body: JSON.stringify(review),
       mode: 'cors',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
       },
-    }).then(() => {
-      callback(null, 'Review Added!');
-    }).catch((error) => {
-      callback(error, null);
     });
+  }
+
+  /**
+   * Attempt to post the pending reviews
+   */
+  static postReviewQueue(callback) {
+    DBHelper.openDatabase()
+      .then(db => {
+        const tx = db.transaction('reviewQueue', 'readwrite');
+        const store = tx.objectStore('reviewQueue');
+        // Open a cursor then
+        return store.openCursor();
+      }).then(function postNextInQueue(cursor) {
+        if (!cursor) return;
+        DBHelper.postReview(cursor.value);
+        cursor.delete();
+        return cursor.continue()
+          .then(postNextInQueue);
+      }).then(() => {
+        callback(null, 'You are back online and your review has been posted!');
+      })
+      .catch(error => callback(error, null));
+  }
+
+  /**
+   * Toggle favorite
+   */
+  static toggleFavorite(id, is_favorite, callback) {
+    // Attempt to toggle favorite
+    if (is_favorite === 'true') {
+      DBHelper.openDatabase()
+        .then(db => {
+          if (!db) return;
+          DBHelper.putFavorite(id, is_favorite)
+            .then(response => response.json())
+            .then(restaurant => {
+              const tx = db.transaction('restaurants', 'readwrite');
+              const store = tx.objectStore('restaurants');
+              store.put(restaurant);
+              callback(null, 'unfavorited');
+            })
+            .catch((error) => {
+              // Something went wrong when favoriting so add to queue
+              DBHelper.addToRestaurantQueue(id, is_favorite, (err, res) => {
+                if (err) {
+                  callback(err, null);
+                } else {
+                  callback('unfavorited', null);
+                }
+              });
+            });
+        })
+        .catch(error => console.log(error));
+    } else {
+      DBHelper.openDatabase()
+        .then(db => {
+          if (!db) return;
+          DBHelper.putFavorite(id, is_favorite)
+            .then(response => response.json())
+            .then(restaurant => {
+              const tx = db.transaction('restaurants', 'readwrite');
+              const store = tx.objectStore('restaurants');
+              store.put(restaurant);
+              callback(null, 'favorited');
+            })
+            .catch((error) => {
+              // Something went wrong when favoriting so add to queue
+              DBHelper.addToRestaurantQueue(id, is_favorite, (err, res) => {
+                if (err) {
+                  callback(err, null);
+                } else {
+                  callback('favorited', null);
+                }
+              });
+            });
+        })
+        .catch(error => console.log(error));
+    }
+  }
+
+  /**
+   * PUT favorite
+   */
+  static putFavorite(id, is_favorite) {
+    // toggle the favorite before submitting to the server
+    if (is_favorite === 'false') {
+      is_favorite = 'true';
+    } else {
+      is_favorite = 'false';
+    }
+    return fetch(`${DBHelper.DATABASE_URL}restaurants/${id}/?is_favorite=${is_favorite}`, {
+      mode: 'cors',
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+    });
+  }
+
+  /**
+   * Add favorite to queue to add when online
+   */
+  static addToRestaurantQueue(id, is_favorite, callback) {
+    DBHelper.openDatabase()
+      .then(db => {
+        const tx = db.transaction('favoriteQueue', 'readwrite');
+        const restaurantData = { id, is_favorite };
+        tx.objectStore('favoriteQueue')
+          .put(restaurantData)
+          .then(() => {
+            callback(null, 'It appears you\'re offline but we\'ll remember your favorite and save it when you connect!');
+          });
+        return tx.complete;
+      })
+      .catch(error => {
+        callback('It appears you\'re offline. Please try again later.', null);
+      });
+  }
+
+  /**
+   * Attempt to post the pending favorite changes
+   */
+  static saveFavoriteQueue(callback) {
+    DBHelper.openDatabase()
+      .then(db => {
+        const tx = db.transaction('favoriteQueue', 'readwrite');
+        const store = tx.objectStore('favoriteQueue');
+        // Open a cursor then
+        return store.openCursor();
+      }).then(function postNextInQueue(cursor) {
+        if (!cursor) return;
+        DBHelper.putFavorite(cursor.value.id, cursor.value.is_favorite);
+        cursor.delete();
+        return cursor.continue()
+          .then(postNextInQueue);
+      }).then(() => {
+        callback(null, 'You are back online and your favorite has been saved!');
+      })
+      .catch(error => callback(error, null));
   }
 }
